@@ -60,13 +60,16 @@ app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
   console.log('DELETE request received for id:', id)
 
-  Person.findByIdAndRemove(id)
+  if (!id) {
+    return response.status(400).json({ error: 'id missing' })
+  }
+
+  Person.findByIdAndDelete(id)
     .then(result => {
       console.log('Result of deletion:', result)
       if (result) {
-        response.status(204).end() // apagado com sucesso
+        response.status(204).end()
       } else {
-        console.log('Person not found')
         response.status(404).json({ error: 'person not found' })
       }
     })

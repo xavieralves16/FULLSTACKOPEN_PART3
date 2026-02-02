@@ -108,6 +108,25 @@ app.put('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
+// GET a single person by ID
+app.get('/api/persons/:id', (request, response, next) => {
+  const id = request.params.id
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return response.status(400).json({ error: 'malformatted id' })
+  }
+
+  Person.findById(id)
+    .then(person => {
+      if (person) {
+        response.json(person)  
+      } else {
+        response.status(404).json({ error: 'person not found' })
+      }
+    })
+    .catch(error => next(error))
+})
+
 // Serve frontend for non-API routes
 app.use((req, res, next) => {
   if (!req.path.startsWith('/api')) {

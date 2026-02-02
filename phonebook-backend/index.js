@@ -2,6 +2,7 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const path = require('path')
+const mongoose = require('mongoose')
 
 const Person = require('./models/person')
 
@@ -64,19 +65,19 @@ app.delete('/api/persons/:id', (request, response, next) => {
     return response.status(400).json({ error: 'id missing' })
   }
 
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return response.status(400).json({ error: 'malformatted id' })
+  }
+
   Person.findByIdAndDelete(id)
     .then(result => {
-      console.log('Result of deletion:', result)
       if (result) {
         response.status(204).end()
       } else {
         response.status(404).json({ error: 'person not found' })
       }
     })
-    .catch(error => {
-      console.error('Error during deletion:', error)
-      next(error)
-    })
+    .catch(error => next(error))
 })
 
 // Serve frontend for non-API routes

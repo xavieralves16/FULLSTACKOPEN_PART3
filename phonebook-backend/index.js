@@ -89,16 +89,10 @@ app.use((req, res, next) => {
   }
 })
 
-// Error handling middleware
-app.use((error, request, response, next) => {
-  console.error(error.message)
+const errorHandler = require('./middleware/errorHandler')
 
-  if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message })
-  }
 
-  next(error)
-})
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {

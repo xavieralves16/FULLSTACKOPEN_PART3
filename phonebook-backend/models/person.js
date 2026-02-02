@@ -6,6 +6,16 @@ const url =
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
 
+const phoneValidator = [
+  {
+    validator: function(v) {
+      if (!v || v.length < 8) return false
+      return /^\d{2,3}-\d{5,}$/.test(v)
+    },
+    message: props => `${props.value} is not a valid phone number! Format must be XX-XXXXXXX or XXX-XXXXXXX`
+  }
+]
+
 const personSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -15,6 +25,7 @@ const personSchema = new mongoose.Schema({
   number: {
     type: String,
     required: [true, 'Phone number is required'],
+    validate: phoneValidator
   },
 })
 

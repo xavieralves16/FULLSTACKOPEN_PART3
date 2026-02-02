@@ -55,6 +55,21 @@ app.post('/api/persons', (request, response, next) => {
     .catch(error => next(error))
 })
 
+// DELETE a person by ID
+app.delete('/api/persons/:id', (request, response, next) => {
+  const id = request.params.id
+
+  Person.findByIdAndRemove(id)
+    .then(result => {
+      if (result) {
+        response.status(204).end() 
+      } else {
+        response.status(404).json({ error: 'person not found' })
+      }
+    })
+    .catch(error => next(error))
+})
+
 // Serve frontend for non-API routes
 app.use((req, res, next) => {
   if (!req.path.startsWith('/api')) {

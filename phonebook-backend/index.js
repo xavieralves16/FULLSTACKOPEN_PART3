@@ -80,6 +80,34 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
+// UPDATE a person's number by ID
+app.put('/api/persons/:id', (request, response, next) => {
+  const { name, number } = request.body
+  const id = request.params.id
+
+  if (!number) {
+    return response.status(400).json({ error: 'number is missing' })
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return response.status(400).json({ error: 'malformatted id' })
+  }
+
+  Person.findByIdAndUpdate(
+    id,
+    { name, number },
+    { new: true, runValidators: true, context: 'query' }
+  )
+    .then(updatedPerson => {
+      if (updatedPerson) {
+        response.json(updatedPerson)
+      } else {
+        response.status(404).json({ error: 'person not found' })
+      }
+    })
+    .catch(error => next(error))
+})
+
 // Serve frontend for non-API routes
 app.use((req, res, next) => {
   if (!req.path.startsWith('/api')) {

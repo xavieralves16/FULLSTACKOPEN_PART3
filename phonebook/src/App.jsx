@@ -93,6 +93,11 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+      .catch(error => {
+        setNotificationType('error')
+        setNotification(error.response.data.error) 
+        setTimeout(() => setNotification(null), 5000)
+  })
   }
 
 

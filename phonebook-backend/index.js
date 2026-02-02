@@ -58,16 +58,22 @@ app.post('/api/persons', (request, response, next) => {
 // DELETE a person by ID
 app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
+  console.log('DELETE request received for id:', id)
 
   Person.findByIdAndRemove(id)
     .then(result => {
+      console.log('Result of deletion:', result)
       if (result) {
-        response.status(204).end() 
+        response.status(204).end() // apagado com sucesso
       } else {
+        console.log('Person not found')
         response.status(404).json({ error: 'person not found' })
       }
     })
-    .catch(error => next(error))
+    .catch(error => {
+      console.error('Error during deletion:', error)
+      next(error)
+    })
 })
 
 // Serve frontend for non-API routes
